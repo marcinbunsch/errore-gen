@@ -1,0 +1,24 @@
+{
+  "name": "errore-gen",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest --run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "Marcin Bunsch <marcin.bunsch@gmail.com>",
+  "contributors": [
+    "Andrei Surugiu <54327698+DeluxeOwl@users.noreply.github.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "errore": "^0.14.1"
+  },
+  "devDependencies": {
+    "typescript": ">=5.0.0",
+    "vitest": "^4.1.2"
+  }
+}
