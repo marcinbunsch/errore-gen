@@ -26,6 +26,7 @@ There are two entrypoints:
 
 ```ts
 import { gen, ok } from "errore-gen"
+import { matchError } from "errore"
 
 const result = gen(function* () {
   const user = yield* ok(getUser(id))
@@ -33,6 +34,15 @@ const result = gen(function* () {
   return { user, posts }
 })
 // type: NotFoundError | NetworkError | { user: User; posts: Post[] }
+
+if (result instanceof Error) {
+  const message = matchError(result, {
+    NotFoundError: (e) => `User not found`,
+    NetworkError: (e) => `Network failed: ${e.message}`,
+    Error: (e) => `Unexpected: ${e.message}`,
+  })
+  console.log(message)
+}
 ```
 
 ### `errore-gen/errore` — with errore
@@ -48,6 +58,15 @@ const result = errore.gen(function* () {
   return { user, posts }
 })
 // type: NotFoundError | NetworkError | { user: User; posts: Post[] }
+
+if (result instanceof Error) {
+  const message = errore.matchError(result, {
+    NotFoundError: (e) => `User not found`,
+    NetworkError: (e) => `Network failed: ${e.message}`,
+    Error: (e) => `Unexpected: ${e.message}`,
+  })
+  console.log(message)
+}
 ```
 
 ### Async
