@@ -6,6 +6,16 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./errore": {
+      "types": "./dist/errore.d.ts",
+      "default": "./dist/errore.js"
+    }
+  },
   "scripts": {
     "build": "tsc && rm dist/gen.typecheck.*",
     "test": "vitest --run",
@@ -17,10 +27,11 @@
     "Andrei Surugiu <54327698+DeluxeOwl@users.noreply.github.com>"
   ],
   "license": "MIT",
-  "dependencies": {
-    "errore": "^0.14.1"
+  "peerDependencies": {
+    "errore": ">=0.14.0"
   },
   "devDependencies": {
+    "errore": "^0.14.1",
     "typescript": ">=5.0.0",
     "vitest": "^4.1.2"
   }

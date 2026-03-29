@@ -9,18 +9,20 @@ I extracted into a companion package as suggested by [@remorses](https://github.
 ## Install
 
 ```bash
-npm install marcinbunsch/errore-gen
+npm install errore marcinbunsch/errore-gen
 ```
 
 ```bash
-pnpm add marcinbunsch/errore-gen
+pnpm add errore marcinbunsch/errore-gen
 ```
 
 ## Usage
 
 `gen` and `ok` let you write error-handling code that reads top to bottom. `ok` yields the first error and `gen` short-circuits with it.
 
-### Sync
+There are two entrypoints:
+
+### `errore-gen` — standalone
 
 ```ts
 import { gen, ok } from "errore-gen"
@@ -31,25 +33,34 @@ const result = gen(function* () {
   return { user, posts }
 })
 // type: NotFoundError | NetworkError | { user: User; posts: Post[] }
+```
 
-if (result instanceof Error) return result
-return result
+### `errore-gen/errore` — with errore
+
+Re-exports everything from `errore` plus `gen` and `ok`, so you can use a single import:
+
+```ts
+import * as errore from "errore-gen/errore"
+
+const result = errore.gen(function* () {
+  const user = yield* errore.ok(getUser(id))
+  const posts = yield* errore.ok(getPosts(user.id))
+  return { user, posts }
+})
+// type: NotFoundError | NetworkError | { user: User; posts: Post[] }
 ```
 
 ### Async
 
-```ts
-import { gen, ok } from "errore-gen"
+Both entrypoints work with async generators:
 
+```ts
 const result = await gen(async function* () {
   const user = yield* ok(await getUser(id))
   const posts = yield* ok(await getPosts(user.id))
   return { user, posts }
 })
 // type: Promise<NotFoundError | NetworkError | { user: User; posts: Post[] }>
-
-if (result instanceof Error) return result
-return result
 ```
 
 ## API

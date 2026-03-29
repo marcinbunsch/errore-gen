@@ -1,12 +1,7 @@
-// re-export all from errore for convenience so that you can import all from errore-gen
-export * from "errore"
-
-import { isError } from "errore"
-
 export function* ok<V>(
   value: V,
 ): Generator<Extract<V, Error>, Exclude<V, Error>> {
-  if (isError(value)) {
+  if (value instanceof Error) {
     yield value as Extract<V, Error>
     throw new Error("ok must be used with gen")
   }

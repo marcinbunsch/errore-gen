@@ -1,8 +1,5 @@
-// re-export all from errore for convenience so that you can import all from errore-gen
-export * from "errore";
-import { isError } from "errore";
 export function* ok(value) {
-    if (isError(value)) {
+    if (value instanceof Error) {
         yield value;
         throw new Error("ok must be used with gen");
     }

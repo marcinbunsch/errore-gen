@@ -1,12 +1,12 @@
 import { describe, test, expect } from "vitest"
-import { gen, ok, createTaggedError, matchError } from "../src/index.js"
+import * as errore from "../src/errore.js"
 
-class NotFoundError extends createTaggedError({
+class NotFoundError extends errore.createTaggedError({
   name: "NotFoundError",
   message: "User $id not found",
 }) {}
 
-class DbError extends createTaggedError({
+class DbError extends errore.createTaggedError({
   name: "DbError",
   message: "Database failed: $reason",
 }) {}
@@ -23,9 +23,9 @@ function mayFail2(ok: boolean): DbError | number {
 
 describe("gen", () => {
   test("sync: returns value when all ok", () => {
-    const result = gen(function* () {
-      const a = yield* ok(mayFail1(true))
-      const b = yield* ok(mayFail2(true))
+    const result = errore.gen(function* () {
+      const a = yield* errore.ok(mayFail1(true))
+      const b = yield* errore.ok(mayFail2(true))
       return a + b
     })
 
@@ -33,9 +33,9 @@ describe("gen", () => {
   })
 
   test("sync: returns first yielded error", () => {
-    const result = gen(function* () {
-      const first = yield* ok(mayFail1(false))
-      const second = yield* ok(mayFail2(true))
+    const result = errore.gen(function* () {
+      const first = yield* errore.ok(mayFail1(false))
+      const second = yield* errore.ok(mayFail2(true))
       return first + second
     })
 
@@ -43,9 +43,9 @@ describe("gen", () => {
   })
 
   test("async: returns value when all ok", async () => {
-    const result = await gen(async function* () {
-      const a = yield* ok(await Promise.resolve(mayFail1(true)))
-      const b = yield* ok(await Promise.resolve(mayFail2(true)))
+    const result = await errore.gen(async function* () {
+      const a = yield* errore.ok(await Promise.resolve(mayFail1(true)))
+      const b = yield* errore.ok(await Promise.resolve(mayFail2(true)))
       return a + b
     })
 
@@ -53,9 +53,9 @@ describe("gen", () => {
   })
 
   test("async: returns first yielded error", async () => {
-    const result = await gen(async function* () {
-      const first = yield* ok(await Promise.resolve(mayFail1(false)))
-      const second = yield* ok(await Promise.resolve(mayFail2(true)))
+    const result = await errore.gen(async function* () {
+      const first = yield* errore.ok(await Promise.resolve(mayFail1(false)))
+      const second = yield* errore.ok(await Promise.resolve(mayFail2(true)))
       return first + second
     })
 
@@ -63,14 +63,14 @@ describe("gen", () => {
   })
 
   test("matches error with matchError", () => {
-    const result = gen(function* () {
-      const first = yield* ok(mayFail1(false))
-      const second = yield* ok(mayFail2(true))
+    const result = errore.gen(function* () {
+      const first = yield* errore.ok(mayFail1(false))
+      const second = yield* errore.ok(mayFail2(true))
       return first + second
     })
 
     if (result instanceof Error) {
-      const message = matchError(result, {
+      const message = errore.matchError(result, {
         NotFoundError: (e) => `Missing ${e.id}`,
         DbError: (e) => `Db ${e.reason}`,
         Error: (e) => `Unknown ${e.message}`,
